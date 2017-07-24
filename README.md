@@ -16,6 +16,6 @@ Then:
 
 ## FAQs
 
-###### Why do I ask for the url parameter?
+#### Why do I ask for the url parameter?
  - I am using the URL parameter so the user can specify tag searches as well (the rectangular suggestions on the top for google)
 
