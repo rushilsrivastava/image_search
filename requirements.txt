@@ -1,0 +1,11 @@
+selenium
+requests
+urllib
+time
+os
+sys
+json
+argparse
+pathlib
+lxml.html
+bs4
