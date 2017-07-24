@@ -82,7 +82,7 @@ def download_image(link, image_data):
         file_name = link.split("/")[-1]
         type = file_name.split(".")[-1]
         type = (type[:3]) if len(type) > 3 else type
-        if or type.lower() == "jpe":
+        if type.lower() == "jpe":
             type = "jpeg"
         if type.lower() not in ["jpeg", "jfif", "exif", "tiff", "gif", "bmp", "png", "webp", "jpg"]:
             type = "jpg"
