@@ -1,5 +1,5 @@
-# image-scrappers
-Image Scrappers built for scrapping Bing and Google images + metadata. Made for Python3.5
+# image-scrapers
+Image Scrapers built for scraping Bing and Google images + metadata. Made for Python3.5
 
 ## How to Use
 
