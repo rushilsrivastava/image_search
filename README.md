@@ -1,5 +1,8 @@
 # image-scrapers
-Image Scrapers built for scraping Bing and Google images + metadata. Made for Python3.5
+Image Scrapers built for scraping Bing and Google images + metadata. Made for Python 3.5.
+
+Google Scraping requires no API key.
+Bing Scraping requires a [Bing Image Search API Key](https://azure.microsoft.com/en-us/services/cognitive-services/bing-image-search-api/).
 
 ## How to Use
 
