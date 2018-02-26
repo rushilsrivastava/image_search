@@ -11,9 +11,10 @@ from lxml.html import fromstring
 import os
 import sys
 from fake_useragent import UserAgent
+import urllib.parse as urlparse
 
 '''
-Commandline based Google Image scrapping. Gets up to 800 images.
+Commandline based Google Image scraping. Gets up to 800 images.
 Author: Rushil Srivastava (rushu0922@gmail.com)
 '''
 
@@ -110,24 +111,23 @@ if __name__ == "__main__":
     # parse command line options
     parser = argparse.ArgumentParser()
     parser.add_argument("url", help="Give the url that I should parse.")
-    parser.add_argument("keyword", help="Query I should parse.")
     args = parser.parse_args()
 
-        # check directory and create if necessary
+    # set local vars from user input
+    query = urlparse.parse_qs(urlparse.urlparse(args.url).query)['q'][0]
+    url = args.url
+    source = search(url)
+
+    # check directory and create if necessary
     if not os.path.isdir("dataset/"):
         os.makedirs("dataset/")
-    if not os.path.isdir("dataset/google/{}".format(args.keyword)):
-        os.makedirs("dataset/google/{}".format(args.keyword))
-    if not os.path.isdir("dataset/logs/google/".format(args.keyword)):
-        os.makedirs("dataset/logs/google/".format(args.keyword))
+    if not os.path.isdir("dataset/google/{}".format(query)):
+        os.makedirs("dataset/google/{}".format(query))
+    if not os.path.isdir("dataset/logs/google/".format(query)):
+        os.makedirs("dataset/logs/google/".format(query))
 
     # set stack limit
     sys.setrecursionlimit(1000000)
-
-    # get user input and search on google
-    query = args.keyword
-    url = args.url
-    source = search(url)
 
     # Parse the page source and download pics
     soup = BeautifulSoup(str(source), "html.parser")

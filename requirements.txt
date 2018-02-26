@@ -1,6 +1,5 @@
 selenium
 requests
-urllib
 time
 os
 sys
