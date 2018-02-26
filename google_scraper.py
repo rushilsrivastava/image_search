@@ -116,7 +116,6 @@ if __name__ == "__main__":
     # set local vars from user input
     query = urlparse.parse_qs(urlparse.urlparse(args.url).query)['q'][0]
     url = args.url
-    source = search(url)
 
     # check directory and create if necessary
     if not os.path.isdir("dataset/"):
@@ -125,6 +124,8 @@ if __name__ == "__main__":
         os.makedirs("dataset/google/{}".format(query))
     if not os.path.isdir("dataset/logs/google/".format(query)):
         os.makedirs("dataset/logs/google/".format(query))
+
+    source = search(url)
 
     # set stack limit
     sys.setrecursionlimit(1000000)
