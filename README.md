@@ -19,6 +19,8 @@ Then:
 
 ### Bing:
 
+Bing Scraping requires a [Bing Image Search API Key](https://azure.microsoft.com/en-us/services/cognitive-services/bing-image-search-api/).
+
 Make sure you install the requirements by doing:
 
     pip install -r requirements.txt
@@ -32,4 +34,3 @@ Then:
 
 *Why do I ask for the url parameter?*
  - I am using the URL parameter so the user can specify tag searches as well (the rectangular suggestions on the top for google)
-
