@@ -1,4 +1,3 @@
-
 # image-scrapers
 Image Scrappers built for scrapping Bing and Google images + metadata. Made for Python3.5.
 
@@ -9,7 +8,8 @@ Both the scrapers will save to their own folders under a global folder called `d
 ### Google:
 
 Make sure you install the requirements by doing:
-	pip install -r requirements.txt
+
+    pip install -r requirements.txt
 
 Ensure you have the [appropriate version](https://sites.google.com/a/chromium.org/chromedriver/downloads) of ChromeDriver on your machine.
 
