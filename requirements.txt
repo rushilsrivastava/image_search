@@ -1,9 +1,5 @@
 selenium
 requests
-time
-os
-sys
-json
 argparse
 pathlib
 lxml.html
