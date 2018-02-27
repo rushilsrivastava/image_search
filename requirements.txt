@@ -1,5 +1,5 @@
 selenium
-requests
+requests[security]
 argparse
 pathlib
 lxml.html

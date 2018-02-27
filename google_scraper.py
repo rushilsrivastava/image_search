@@ -39,16 +39,20 @@ def search(url):
         element.send_keys(Keys.PAGE_DOWN)
         time.sleep(0.3)  # bot id protection
 
-    browser.find_element_by_id("smb").click()
-    print("[%] Successfully clicked 'Show More Button'.")
-
-    for i in range(50):
-        element.send_keys(Keys.PAGE_DOWN)
-        time.sleep(0.3)  # bot id protection
-
-    time.sleep(1)
+    try:
+        browser.find_element_by_id("smb").click()
+        print("[%] Successfully clicked 'Show More Button'.")
+        for i in range(50):
+            element.send_keys(Keys.PAGE_DOWN)
+            time.sleep(0.3)  # bot id protection
+    except:
+        for i in range(10):
+            element.send_keys(Keys.PAGE_DOWN)
+            time.sleep(0.3)  # bot id protection
 
     print("[%] Reached end of Page.")
+
+    time.sleep(1)
     # Get page source and close the browser
     source = browser.page_source
     f = open('dataset/logs/google/source.html', 'w+')
