@@ -77,6 +77,7 @@ def download_image(link, image_data):
     ua = UserAgent()
     headers = {"User-Agent": ua.random}
 
+
     # Get the image link
     try:
         # Get the file name and type
@@ -94,7 +95,7 @@ def download_image(link, image_data):
             urllib.request.urlretrieve(link,
                                        "dataset/google/{}/".format(query) + "Scrapper_{}.{}".format(str(download_image.delta),
                                                                                              type))
-            print("[%] Downloaded File\n")
+            print("[%] Downloaded File")
             with open("dataset/google/{}/Scrapper_{}.json".format(query, str(download_image.delta)), "w") as outfile:
                 json.dump(image_data, outfile, indent=4)
         except Exception as e:
@@ -141,36 +142,43 @@ if __name__ == "__main__":
         pass
 
     # Get the links and image data
-    links = soup.find_all("a", class_="rg_l")
+    links = [json.loads(i.text)["ou"] for i in soup.find_all("div", class_="rg_meta")]
     print("[%] Indexed {} Images.".format(len(links)))
     print("\n===============================================\n")
     print("[%] Getting Image Information.\n")
     images = {}
     linkcounter = 0
     for a in soup.find_all("div", class_="rg_meta"):
-        r = requests.get("https://www.google.com" + links[linkcounter].get("href"), headers=headers)
-        title = str(fromstring(r.content).findtext(".//title"))
-        link = title.split(" ")[-1]
+        print("\n------------------------------------------")
+        #r = requests.get("https://www.google.com" + links[linkcounter].get("href"), headers=headers)
+        #title = str(fromstring(r.content).findtext(".//title"))
+        #link = title.split(" ")[-1]
+        rg_meta = json.loads(a.text)
+        if 'st' in rg_meta:
+            title = rg_meta['st']
+        else:
+            title = ""
+        link = rg_meta["ou"]
         print("\n[%] Getting info on: {}".format(link))
         try:
-            image_data = "google", query, json.loads(a.text)["pt"], json.loads(a.text)["s"], json.loads(a.text)["st"], json.loads(a.text)["ou"], json.loads(a.text)["ru"]
+            image_data = "google", query, rg_meta["pt"], rg_meta["s"], title, link, rg_meta["ru"]
             images[link] = image_data
         except Exception as e:
             images[link] = image_data
-            print("[!] Issue getting data: {}\n[!] Error: {}".format(image_data, e))
+            print("[!] Issue getting data: {}\n[!] Error: {}".format(rg_meta, e))
 
         linkcounter += 1
 
     # Open i processes to download
+    print("\n------------------------------------------\n")
+    print("\n===============================================\n")
     download_image.delta = 0
     for i, (link) in enumerate(links):
-        r = requests.get("https://www.google.com" + link.get("href"), headers=headers)
-        title = str(fromstring(r.content).findtext(".//title"))
-        link = title.split(" ")[-1]
+        print("\n------------------------------------------\n")
         try:
             download_image(link, images[link])
         except Exception as e:
             error(link)
 
-    print("[%] Done. Downloaded {} images.".format(download_image.delta))
+    print("\n\n[%] Done. Downloaded {} images.".format(download_image.delta))
     print("\n===============================================\n")
