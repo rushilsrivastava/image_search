@@ -2,5 +2,5 @@ selenium
 requests[security]
 argparse
 pathlib
-lxml.html
+lxml
 bs4
