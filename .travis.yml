@@ -13,8 +13,8 @@ addons: # get google-chrome-stable
 before_script:
   - wget -N http://chromedriver.storage.googleapis.com/2.35/chromedriver_linux64.zip -P ~/
   - unzip ~/chromedriver_linux64.zip -d ~/
-  - unzip chromedriver_linux64.zip -d /home/travis/virtualenv/python2.7.14/bin/
-  - unzip chromedriver_linux64.zip -d /home/travis/virtualenv/python3.5.5/bin/
+  - unzip ~/chromedriver_linux64.zip -d /home/travis/virtualenv/python2.7.14/bin/
+  - unzip ~/chromedriver_linux64.zip -d /home/travis/virtualenv/python3.5.5/bin/
   - rm ~/chromedriver_linux64.zip
   - export CHROME_BIN=chromium-browser
   - sudo mv -f ~/chromedriver /usr/local/share/
