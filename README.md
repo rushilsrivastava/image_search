@@ -7,6 +7,8 @@ Both the scrapers will save to their own folders under a global folder called `d
 
 ### Google:
 
+[![Build Status](https://travis-ci.org/rushilsrivastava/image-scrapers.svg?branch=master)](https://travis-ci.org/rushilsrivastava/image-scrapers)
+
 Make sure you install the requirements by doing:
 
     pip install -r requirements.txt
