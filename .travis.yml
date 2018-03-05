@@ -10,7 +10,7 @@ dist: trusty
 addons: # get google-chrome-stable
   chrome: stable
 
-install: # Install ChromeDriver
+before_script:
   - wget -N http://chromedriver.storage.googleapis.com/2.35/chromedriver_linux64.zip -P ~/
   - unzip ~/chromedriver_linux64.zip -d ~/
   - unzip chromedriver_linux64.zip -d /home/travis/virtualenv/python2.7.14/bin/
