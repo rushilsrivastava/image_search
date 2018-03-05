@@ -7,18 +7,17 @@ python:
 sudo: true
 env: DISPLAY=':99.0'
 dist: trusty
-addons:
-  apt:
-    sources:
-      - google-chrome
-    packages:
-      - google-chrome-stable
+addons: # get google-chrome-stable
+  chrome: stable
 
-before_script:
-  - wget http://chromedriver.storage.googleapis.com/2.35/chromedriver_linux64.zip
-  - unzip chromedriver_linux64.zip -d /home/travis/virtualenv/python2.7.9/
-  - export CHROME_BIN=chromium-browser
-  - "sh -e /etc/init.d/xvfb start"
+install: # Install ChromeDriver
+  - wget -N http://chromedriver.storage.googleapis.com/2.35/chromedriver_linux64.zip -P ~/
+  - unzip ~/chromedriver_linux64.zip -d ~/
+  - rm ~/chromedriver_linux64.zip
+  - sudo mv -f ~/chromedriver /usr/local/share/
+  - sudo chmod +x /usr/local/share/chromedriver
+  - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
+  - sh -e /etc/init.d/xvfb start
   - sleep 3
 
 install: "pip install -r requirements.txt"
