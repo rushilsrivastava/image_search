@@ -9,4 +9,7 @@ sudo: true
 install: "pip install -r requirements.txt"
 
 script:
-  - python google_scraper.py "https://www.google.com/search?q=cats&source=lnms&tbm=isch&sa=X&ved=0ahUKEwiwoLXK1qLVAhWqwFQKHYMwBs8Q_AUICigB" cats
+  - python google_scraper.py "https://www.google.com/search?q=cats&source=lnms&tbm=isch&sa=X&ved=0ahUKEwiwoLXK1qLVAhWqwFQKHYMwBs8Q_AUICigB"
+
+notifications:
+  email: false
