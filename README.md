@@ -1,5 +1,5 @@
 # image-scrapers
-Image Scrappers built for scrapping Bing and Google images + metadata. Made for Python3.5.
+Image Scrappers built for scrapping Bing and Google images + metadata. Bing works with Python 3 and Google works with Python 2 and 3.
 
 Both the scrapers will save to their own folders under a global folder called `dataset`.
 
