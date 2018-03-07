@@ -11,7 +11,7 @@ Commandline based Bing Image scrapping. Gets 800+ images.
 Author: Rushil Srivastava (rushu0922@gmail.com)
 '''
 
-apikey = ""
+apikey = "test"
 ua = UserAgent()
 
 

@@ -11,7 +11,12 @@ from lxml.html import fromstring
 import os
 import sys
 from fake_useragent import UserAgent
-import urllib.parse as urlparse
+if sys.version_info[0] > 2:
+    import urllib.parse as urlparse
+else:
+    import urlparse
+    reload(sys)
+    sys.setdefaultencoding('utf8')
 
 '''
 Commandline based Google Image scraping. Gets up to 800 images.
@@ -81,7 +86,6 @@ def download_image(link, image_data):
     ua = UserAgent()
     headers = {"User-Agent": ua.random}
 
-
     # Get the image link
     try:
         # Get the file name and type
@@ -94,11 +98,13 @@ def download_image(link, image_data):
             type = "jpg"
 
         # Download the image
-        print("[%] Downloading Image #{} from {}".format(download_image.delta, link))
+        print("[%] Downloading Image #{} from {}".format(
+            download_image.delta, link))
         try:
-            urllib.request.urlretrieve(link,
-                                       "dataset/google/{}/".format(query) + "Scrapper_{}.{}".format(str(download_image.delta),
-                                                                                             type))
+            if sys.version_info[0] > 2:
+                urllib.request.urlretrieve(link, "dataset/google/{}/".format(query) + "Scrapper_{}.{}".format(str(download_image.delta), type))
+            else:
+                urllib.urlopen(link, "dataset/google/{}/".format(query) + "Scrapper_{}.{}".format(str(download_image.delta), type))
             print("[%] Downloaded File")
             with open("dataset/google/{}/Scrapper_{}.json".format(query, str(download_image.delta)), "w") as outfile:
                 json.dump(image_data, outfile, indent=4)
@@ -146,17 +152,15 @@ if __name__ == "__main__":
         pass
 
     # Get the links and image data
-    links = [json.loads(i.text)["ou"] for i in soup.find_all("div", class_="rg_meta")]
+    links = [json.loads(i.text)["ou"]
+             for i in soup.find_all("div", class_="rg_meta")]
     print("[%] Indexed {} Images.".format(len(links)))
     print("\n===============================================\n")
-    print("[%] Getting Image Information.\n")
+    print("[%] Getting Image Information.")
     images = {}
     linkcounter = 0
     for a in soup.find_all("div", class_="rg_meta"):
         print("\n------------------------------------------")
-        #r = requests.get("https://www.google.com" + links[linkcounter].get("href"), headers=headers)
-        #title = str(fromstring(r.content).findtext(".//title"))
-        #link = title.split(" ")[-1]
         rg_meta = json.loads(a.text)
         if 'st' in rg_meta:
             title = rg_meta['st']
