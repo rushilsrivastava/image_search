@@ -15,6 +15,7 @@ if sys.version_info[0] > 2:
     import urllib.parse as urlparse
 else:
     import urlparse
+    import io
     reload(sys)
     sys.setdefaultencoding('utf8')
 
@@ -60,8 +61,12 @@ def search(url):
     time.sleep(1)
     # Get page source and close the browser
     source = browser.page_source
-    f = open('dataset/logs/google/source.html', 'w+')
-    f.write(source)
+    if sys.version_info[0] > 2:
+        with open('dataset/logs/google/source.html', 'w+', encoding='utf-8', errors='replace') as f:
+            f.write(source)
+    else:
+        with io.open('dataset/logs/google/source.html', 'w+', encoding='utf-8', errors='replace') as f:
+            f.write(source)
 
     browser.close()
     print("[%] Closed Browser.")

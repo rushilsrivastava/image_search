@@ -17,7 +17,7 @@ Ensure you have the [appropriate version](https://sites.google.com/a/chromium.or
 
 Then:
 
-    python3.5 google_scraper.py "https://www.google.com/search?q=cats&source=lnms&tbm=isch&sa=X&ved=0ahUKEwiwoLXK1qLVAhWqwFQKHYMwBs8Q_AUICigB"
+    python google_scraper.py "https://www.google.com/search?q=cats&source=lnms&tbm=isch&sa=X&ved=0ahUKEwiwoLXK1qLVAhWqwFQKHYMwBs8Q_AUICigB"
 
 ### Bing:
 
