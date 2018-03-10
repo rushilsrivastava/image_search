@@ -1,5 +1,5 @@
 # image-scrapers
-Image Scrappers built for scrapping Bing and Google images + metadata. Bing works with Python 3 and Google works with Python 2 and 3.
+Image Scrappers built for scraping Bing and Google images + metadata. Bing works with Python 3 and Google works with Python 2 and 3.
 
 Both the scrapers will save to their own folders under a global folder called `dataset`.
 
@@ -36,3 +36,9 @@ Then:
 
 *Why do I ask for the url parameter?*
  - I am using the URL parameter so the user can specify tag searches as well (the rectangular suggestions on the top for google)
+
+## Disclaimer
+
+This program lets you scrape many images from Bing and Google. Please do not download any image violating its copyright terms. Google Images and Bing Images are merely search engines that index images and allow you to find them. Neither Google nor Bing produce these images, and as such, they don't warrant a copyright on any of the images. The original creators of the images own the copyrights.
+
+Images published in the United States are automatically copyrighted by their owners, even if they do not explicitly carry a copyright warning. You may not reproduce copyright images without their owner's permission, except in "fair use" cases. You could risk running into lawyer's warnings, cease-and-desist letters, and copyright suits. Please be careful, and make sure your are not violating any laws!
