@@ -1,11 +1,11 @@
 # image-scrapers
-Image Scrappers built for scraping Bing and Google images + metadata. Bing works with Python 3 and Google works with Python 2 and 3.
+Image Scrapers built for scraping/downloading Bing and Google images + metadata. Bing works with Python 3 and Google works with Python 2 and 3. You can use this script to download images that Bing and Google return in search queries.
 
 Both the scrapers will save to their own folders under a global folder called `dataset`.
 
 ## How to Use
 
-### Google:
+### Google Image Scraper/Downloader:
 
 [![Build Status](https://travis-ci.org/rushilsrivastava/image-scrapers.svg?branch=master)](https://travis-ci.org/rushilsrivastava/image-scrapers)
 
@@ -19,7 +19,7 @@ Then:
 
     python google_scraper.py "https://www.google.com/search?q=cats&source=lnms&tbm=isch&sa=X&ved=0ahUKEwiwoLXK1qLVAhWqwFQKHYMwBs8Q_AUICigB"
 
-### Bing:
+### Bing Image Scraper/Downloader:
 
 Bing Scraping requires a [Bing Image Search API Key](https://azure.microsoft.com/en-us/services/cognitive-services/bing-image-search-api/).
 
@@ -39,6 +39,6 @@ Then:
 
 ## Disclaimer
 
-This program lets you scrape many images from Bing and Google. Please do not download any image violating its copyright terms. Google Images and Bing Images are merely search engines that index images and allow you to find them. Neither Google nor Bing produce these images, and as such, they don't warrant a copyright on any of the images. The original creators of the images own the copyrights.
+This program lets you scrape/download many images from Bing and Google. Please do not download any image violating its copyright terms. Google Images and Bing Images are merely search engines that index images and allow you to find them. Neither Google nor Bing produce these images, and as such, they don't warrant a copyright on any of the images. The original creators of the images own the copyrights.
 
 Images published in the United States are automatically copyrighted by their owners, even if they do not explicitly carry a copyright warning. You may not reproduce copyright images without their owner's permission, except in "fair use" cases. You could risk running into lawyer's warnings, cease-and-desist letters, and copyright suits. Please be careful, and make sure your are not violating any laws!
