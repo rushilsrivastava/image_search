@@ -65,7 +65,7 @@ def search(url):
         with open('dataset/logs/google/source.html', 'w+', encoding='utf-8', errors='replace') as f:
             f.write(source)
     else:
-        with io.open('dataset/logs/google/source.html', 'w+', encoding='utf-8', errors='replace') as f:
+        with io.open('dataset/logs/google/source.html', 'w+', encoding='utf-8') as f:
             f.write(source)
 
     browser.close()
@@ -84,7 +84,7 @@ def error(link):
         with open("dataset/logs/google/errors.log".format(query), "w+") as myfile:
             myfile.write(link + "\n")
 
-def saveImage(link, file_path, headers):
+def save_image(link, file_path, headers):
     r = requests.get(link, stream=True, headers=headers)
     if r.status_code == 200:
         with open(file_path, 'wb') as f:
@@ -115,7 +115,7 @@ def download_image(link, image_data):
         print("[%] Downloading Image #{} from {}".format(
             download_image.delta, link))
         try:
-            saveImage(link, "dataset/google/{}/".format(query) + "Scrapper_{}.{}".format(str(download_image.delta), type), headers)
+            save_image(link, "dataset/google/{}/".format(query) + "Scrapper_{}.{}".format(str(download_image.delta), type), headers)
             print("[%] Downloaded File")
             with open("dataset/google/{}/Scrapper_{}.json".format(query, str(download_image.delta)), "w") as outfile:
                 json.dump(image_data, outfile, indent=4)

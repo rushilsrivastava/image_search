@@ -1,30 +1,30 @@
-import json
 import requests
+import time
+import shutil
 import argparse
-import urllib.request
+import json
+from bs4 import BeautifulSoup
 from pathlib import Path
+from lxml.html import fromstring
 import os
+import sys
 from fake_useragent import UserAgent
+if sys.version_info[0] > 2:
+    import urllib.parse as urlparse
+else:
+    import urlparse
+    import io
+    reload(sys)
+    sys.setdefaultencoding('utf8')
 
 '''
-Commandline based Bing Image scrapping. Gets 800+ images.
+Commandline based Bing Images scraping/downloading. Gets unlimited amounts of images.
 Author: Rushil Srivastava (rushu0922@gmail.com)
 '''
 
-apikey = "test"
-ua = UserAgent()
-
-
-def getData(offset):
-    headers = {"Content-Type": "multipart/form-data", "Ocp-Apim-Subscription-Key": apikey}
-    req = "https://api.cognitive.microsoft.com/bing/v5.0/images/search?q={}&count=150&offset={}".format(query, offset)
-    r = requests.post(req, headers=headers)
-    data = json.loads(r.text)
-    return data
-
 
 def error(link):
-    print("[!] Skipping {}. Can't download or no metadata present.\n".format(link))
+    print("[!] Skipping {}. Can't download or no metadata.\n".format(link))
     file = Path("dataset/logs/bing/errors.log".format(query))
     if file.is_file():
         with open("dataset/logs/bing/errors.log".format(query), "a") as myfile:
@@ -34,106 +34,123 @@ def error(link):
             myfile.write(link + "\n")
 
 
-if __name__ == "__main__":
+def save_image(link, file_path, headers):
+    r = requests.get(link, stream=True, headers=headers)
+    if r.status_code == 200:
+        with open(file_path, 'wb') as f:
+            r.raw.decode_content = True
+            shutil.copyfileobj(r.raw, f)
+    else:
+        raise Exception("Image returned a {} error.".format(r.status_code))
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("keyword", help="Query I should parse.")
-    parser.add_argument("-key", help="Bing Image Search API Key", default=None)
 
-    args = parser.parse_args()
-    query = args.keyword.replace(" ", "+")
-    path = args.keyword.replace(" ", "-")
-    if apikey == "" or apikey == None:
-        if args.key != "" or args.key != None:
-            apikey = args.key
-        else:
-            pass
+def download_image(link, image_data):
+    download_image.delta += 1
+    # Use a random user agent header for bot id
+    ua = UserAgent()
+    headers = {"User-Agent": ua.random}
 
-    print(apikey)
+    # Get the image link
+    try:
+        # Get the file name and type
+        file_name = link.split("/")[-1]
+        type = file_name.split(".")[-1]
+        type = (type[:3]) if len(type) > 3 else type
+        if type.lower() == "jpe":
+            type = "jpeg"
+        if type.lower() not in ["jpeg", "jfif", "exif", "tiff", "gif", "bmp", "png", "webp", "jpg"]:
+            type = "jpg"
 
-    headers = {"Content-Type": "multipart/form-data", "Ocp-Apim-Subscription-Key": apikey}
-    req = "https://api.cognitive.microsoft.com/bing/v5.0/images/search?q={}&count=150".format(query)
-    r = requests.post(req, headers=headers)
-    data = json.loads(r.text)
-
-    if not os.path.isdir("dataset/bing/{}".format(path)):
-        os.makedirs("dataset/bing/{}".format(path))
-    if not os.path.isdir("dataset/logs/bing".format(path)):
-        os.makedirs("dataset/logs/bing".format(path))
-
-    with open("dataset/bing/{}/{}.json".format(path, path), "w+") as outfile:
-        json.dump(data, outfile, indent=4)
-
-    numImages = data['totalEstimatedMatches'] # 775
-    numOperations = int(numImages / 150) # 1
-    numOperationsExtra = numImages % 150 # #0
-    firstImages = data['value']
-
-    print("[*] Number of Images indexed: {}\n".format(numImages))
-
-    delta = 0
-    totalDownloaded = 0
-
-    for i, (image) in enumerate(firstImages):
+        # Download the image
+        print("[%] Downloading Image #{} from {}".format(
+            download_image.delta, link))
         try:
-            totalDownloaded += 1
-            imageDirect = urllib.request.urlopen(firstImages[i]['contentUrl'])
-            link = imageDirect.geturl()
-            image_data = "bing", args.keyword, firstImages[i]['name'], link, firstImages[i]['hostPageDisplayUrl'], firstImages[i][
-                'datePublished']
-            type = firstImages[i]['encodingFormat']
-            print("[%] Downloading Image #{} from {}".format(totalDownloaded, link))
-            urllib.request.urlretrieve(link,
-                                       "dataset/bing/{}/".format(path) + "Scrapper_{}.{}".format(
-                                           str(totalDownloaded), type))
-            print("[%] Downloaded File\n")
-            with open("dataset/bing/{}/Scrapper_{}.json".format(path, str(totalDownloaded)), "w") as outfile:
+            save_image(link, "dataset/bing/{}/".format(query) + "Scrapper_{}.{}".format(str(download_image.delta), type), headers)
+            print("[%] Downloaded File")
+            with open("dataset/bing/{}/Scrapper_{}.json".format(query, str(download_image.delta)), "w") as outfile:
                 json.dump(image_data, outfile, indent=4)
         except Exception as e:
-            totalDownloaded -= 1
+            download_image.delta -= 1
             print("[!] Issue Downloading: {}\n[!] Error: {}".format(link, e))
             error(link)
-        delta += 1
+    except Exception as e:
+        download_image.delta -= 1
+        print("[!] Issue getting: {}\n[!] Error:: {}".format(link, e))
+        error(link)
 
 
-    extraCount = 0
-    while delta <= numImages:
-        extraCount += 1
-        offset = 0
-        if numImages - 150 < 150 * extraCount:
-            offset = numOperationsExtra
-        else:
-            offset = 150 * extraCount
+if __name__ == "__main__":
+    # parse command line options
+    parser = argparse.ArgumentParser()
+    parser.add_argument("keyword", help="Give the keyword that I should parse.")
+    parser.add_argument("--delta", help="Total amount of images I should download. Default 1000",
+                        type=int, default=1000, required=False)
+    parser.add_argument("--adult-filter-off", help="Disable adult filter", action='store_true', required=False)
+    args = parser.parse_args()
 
-        print("[%] Starting extra query {}".format(extraCount))
-        print("[%] Offset = {}\n".format(offset))
+    # set local vars from user input
+    query = args.keyword
+    delta = args.delta
+    adult = "off" if args.adult_filter_off else "on"
+    url = "https://www.bing.com/images/async?q={}&first=0&adlt={}".format(
+        str(query), adult)
 
-        headers = {"Content-Type": "multipart/form-data", "Ocp-Apim-Subscription-Key": apikey}
-        req = "https://api.cognitive.microsoft.com/bing/v5.0/images/search?q={}&count=150&offset={}".format(query, offset)
-        r = requests.post(req, headers=headers)
-        resp = json.loads(r.text)
-        Images = resp['value']
+    # check directory and create if necessary
+    if not os.path.isdir("dataset/"):
+        os.makedirs("dataset/")
+    if not os.path.isdir("dataset/bing/{}".format(query)):
+        os.makedirs("dataset/bing/{}".format(query))
+    if not os.path.isdir("dataset/logs/bing/".format(query)):
+        os.makedirs("dataset/logs/bing/".format(query))
 
-        for i, (image) in enumerate(Images):
+    # set stack limit
+    sys.setrecursionlimit(1000000)
+
+    page_counter = 0
+    link_counter = 0
+    download_image.delta = 0
+    while download_image.delta < delta:
+        # Parse the page source and download pics
+        ua = UserAgent()
+        headers = {"User-Agent": ua.random}
+        payload = (("q", str(query)), ("first", page_counter), ("adlt", adult))
+        source = requests.get("https://www.bing.com/images/async", params=payload, headers=headers).content
+        soup = BeautifulSoup(str(source), "html.parser")
+
+        try:
+            os.remove("dataset/logs/bing/errors.log")
+        except OSError:
+            pass
+
+        # Get the links and image data
+        links = [json.loads(i.get("m"))["murl"]
+                 for i in soup.find_all("a", class_="iusc")]
+        print("[%] Indexed {} Images on Page {}.".format(
+            len(links), page_counter + 1))
+        print("\n===============================================\n")
+        print("[%] Getting Image Information.")
+        images = {}
+        for a in soup.find_all("a", class_="iusc"):
+            if download_image.delta >= delta:
+                break
+            print("\n------------------------------------------")
+            iusc = json.loads(a.get("m"))
+            link = iusc["murl"]
+            print("\n[%] Getting info on: {}".format(link))
             try:
-                totalDownloaded += 1
-                imageDirect = urllib.request.urlopen(Images[i]['contentUrl'])
-                link = imageDirect.geturl()
-                image_data = "bing", args.keyword, Images[i]['name'], link, Images[i]['hostPageDisplayUrl'], Images[i][
-                    'datePublished']
-                type = Images[i]['encodingFormat']
-                if type == "jpeg":
-                    type = "jpg"
-                print("[%] Downloading Image #{} from {}".format(totalDownloaded, link))
-                headers = {"User-Agent": ua.random}
-                urllib.request.urlretrieve(link,
-                                           "dataset/bing/{}/".format(path) + "Scrapper_{}.{}".format(
-                                               str(totalDownloaded), type))
-                print("[%] Downloaded File\n")
-                with open("dataset/bing/{}/Scrapper_{}.json".format(path, str(totalDownloaded)), "w") as outfile:
-                    json.dump(image_data, outfile, indent=4)
+                image_data = "bing", query, link, iusc["purl"], iusc["md5"]
+                images[link] = image_data
+                try:
+                    download_image(link, images[link])
+                except Exception as e:
+                    error(link)
             except Exception as e:
-                totalDownloaded -= 1
-                print("[!] Issue Downloading: {}\n[!] Error: {}".format(link, e))
-                error(link)
-            delta += 1
+                images[link] = image_data
+                print("[!] Issue getting data: {}\n[!] Error: {}".format(rg_meta, e))
+
+            link_counter += 1
+
+        page_counter += 1
+
+    print("\n\n[%] Done. Downloaded {} images.".format(download_image.delta))
+    print("\n===============================================\n")
