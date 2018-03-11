@@ -1,6 +1,6 @@
 import requests
+import shutil
 import time
-import urllib
 import argparse
 import json
 from bs4 import BeautifulSoup
@@ -20,7 +20,7 @@ else:
     sys.setdefaultencoding('utf8')
 
 '''
-Commandline based Google Image scraping. Gets up to 800 images.
+Commandline based Google Images scraping/downloading. Gets up to 1000 images.
 Author: Rushil Srivastava (rushu0922@gmail.com)
 '''
 
@@ -84,6 +84,15 @@ def error(link):
         with open("dataset/logs/google/errors.log".format(query), "w+") as myfile:
             myfile.write(link + "\n")
 
+def saveImage(link, file_path, headers):
+    r = requests.get(link, stream=True, headers=headers)
+    if r.status_code == 200:
+        with open(file_path, 'wb') as f:
+            r.raw.decode_content = True
+            shutil.copyfileobj(r.raw, f)
+    else:
+        raise Exception("Image returned a {} error.".format(r.status_code))
+
 
 def download_image(link, image_data):
     download_image.delta += 1
@@ -106,10 +115,7 @@ def download_image(link, image_data):
         print("[%] Downloading Image #{} from {}".format(
             download_image.delta, link))
         try:
-            if sys.version_info[0] > 2:
-                urllib.request.urlretrieve(link, "dataset/google/{}/".format(query) + "Scrapper_{}.{}".format(str(download_image.delta), type))
-            else:
-                urllib.urlopen(link, "dataset/google/{}/".format(query) + "Scrapper_{}.{}".format(str(download_image.delta), type))
+            saveImage(link, "dataset/google/{}/".format(query) + "Scrapper_{}.{}".format(str(download_image.delta), type), headers)
             print("[%] Downloaded File")
             with open("dataset/google/{}/Scrapper_{}.json".format(query, str(download_image.delta)), "w") as outfile:
                 json.dump(image_data, outfile, indent=4)
@@ -148,8 +154,6 @@ if __name__ == "__main__":
 
     # Parse the page source and download pics
     soup = BeautifulSoup(str(source), "html.parser")
-    ua = UserAgent()
-    headers = {"User-Agent": ua.random}
 
     try:
         os.remove("dataset/logs/google/errors.log")
@@ -163,7 +167,7 @@ if __name__ == "__main__":
     print("\n===============================================\n")
     print("[%] Getting Image Information.")
     images = {}
-    linkcounter = 0
+    link_counter = 0
     for a in soup.find_all("div", class_="rg_meta"):
         print("\n------------------------------------------")
         rg_meta = json.loads(a.text)
@@ -180,7 +184,7 @@ if __name__ == "__main__":
             images[link] = image_data
             print("[!] Issue getting data: {}\n[!] Error: {}".format(rg_meta, e))
 
-        linkcounter += 1
+        link_counter += 1
 
     # Open i processes to download
     print("\n------------------------------------------\n")
