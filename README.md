@@ -1,4 +1,7 @@
 # image-scrapers
+
+[![Build Status](https://travis-ci.org/rushilsrivastava/image-scrapers.svg?branch=master)](https://travis-ci.org/rushilsrivastava/image-scrapers)
+
 Image Scrapers built for scraping/downloading Bing and Google images + metadata. Both the Bing and Google Scraper work in Python 2 and 3. You can use these scripts to download images that Bing and Google return in search queries.
 
 Both the scrapers will save to their own folders under a global folder called `dataset`.
@@ -6,8 +9,6 @@ Both the scrapers will save to their own folders under a global folder called `d
 ## How to Use
 
 ### Google Image Scraper/Downloader:
-
-[![Build Status](https://travis-ci.org/rushilsrivastava/image-scrapers.svg?branch=master)](https://travis-ci.org/rushilsrivastava/image-scrapers)
 
 Make sure you install the requirements by doing:
 
