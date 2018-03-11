@@ -132,12 +132,13 @@ def download_image(link, image_data):
 if __name__ == "__main__":
     # parse command line options
     parser = argparse.ArgumentParser()
-    parser.add_argument("url", help="Give the url that I should parse.")
+    parser.add_argument("query", help="Give the query that I should parse.")
+    parser.add_argument("--url", help="Give the url that I should parse.", required=False)
     args = parser.parse_args()
 
     # set local vars from user input
-    query = urlparse.parse_qs(urlparse.urlparse(args.url).query)['q'][0]
-    url = args.url
+    query = urlparse.parse_qs(urlparse.urlparse(args.url).query)['q'][0] if args.url is not None else args.query
+    url = args.url if args.url is not None else "https://www.google.com/search?q={}&source=lnms&tbm=isch".format(query)
 
     # check directory and create if necessary
     if not os.path.isdir("dataset/"):
