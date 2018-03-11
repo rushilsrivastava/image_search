@@ -123,8 +123,7 @@ if __name__ == "__main__":
             pass
 
         # Get the links and image data
-        links = [json.loads(i.get("m"))["murl"]
-                 for i in soup.find_all("a", class_="iusc")]
+        links = [json.loads(i.get("m"))["murl"] for i in soup.find_all("a", class_="iusc")]
         print("[%] Indexed {} Images on Page {}.".format(
             len(links), page_counter + 1))
         print("\n===============================================\n")
