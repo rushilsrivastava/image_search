@@ -12,7 +12,7 @@ Author: Rushil Srivastava (rushu0922@gmail.com)
 '''
 
 apikey = "test"
-ua = UserAgent()
+ua = UserAgent(verify_ssl=False)
 
 
 def getData(offset):

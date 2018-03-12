@@ -47,7 +47,7 @@ def save_image(link, file_path, headers):
 def download_image(link, image_data):
     download_image.delta += 1
     # Use a random user agent header for bot id
-    ua = UserAgent()
+    ua = UserAgent(verify_ssl=False)
     headers = {"User-Agent": ua.random}
 
     # Get the image link
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     download_image.delta = 0
     while download_image.delta < delta:
         # Parse the page source and download pics
-        ua = UserAgent()
+        ua = UserAgent(verify_ssl=False)
         headers = {"User-Agent": ua.random}
         payload = (("q", str(query)), ("first", page_counter), ("adlt", adult))
         source = requests.get(

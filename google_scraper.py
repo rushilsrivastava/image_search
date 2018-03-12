@@ -106,7 +106,7 @@ def save_image(link, file_path, headers):
 def download_image(link, image_data):
     download_image.delta += 1
     # Use a random user agent header for bot id
-    ua = UserAgent()
+    ua = UserAgent(verify_ssl=False)
     headers = {"User-Agent": ua.random}
 
     # Get the image link
@@ -183,7 +183,7 @@ if __name__ == "__main__":
     # Get the links and image data
     links = [json.loads(i.text)["ou"]
              for i in soup.find_all("div", class_="rg_meta")]
-    print("[%] Indexed {} Images.".format(len(links)))
+    print("[%] Indexed {} Possible Images.".format(len(links)))
     print("\n===============================================\n")
     print("[%] Getting Image Information.")
     images = {}
