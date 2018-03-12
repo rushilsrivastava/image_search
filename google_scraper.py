@@ -6,6 +6,7 @@ import json
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
 from pathlib import Path
 from lxml.html import fromstring
 import os
@@ -25,12 +26,20 @@ Author: Rushil Srivastava (rushu0922@gmail.com)
 '''
 
 
-def search(url):
-    # Create a browser and resize for exact pinpoints
-    browser = webdriver.Chrome()
+def search(url, header):
+
+    # Create a browser and resize depending on user preference
+
+    if header:
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+    else:
+        chrome_options = None
+
+    browser = webdriver.Chrome(chrome_options=chrome_options)
     browser.set_window_size(1024, 768)
     print("\n===============================================\n")
-    print("[%] Successfully launched Chrome Browser")
+    print("[%] Successfully launched ChromeDriver")
 
     # Open the link
     browser.get(url)
@@ -69,7 +78,7 @@ def search(url):
             f.write(source)
 
     browser.close()
-    print("[%] Closed Browser.")
+    print("[%] Closed ChromeDriver.")
 
     return source
 
@@ -136,11 +145,14 @@ if __name__ == "__main__":
     parser.add_argument("--url", help="Give the url that I should parse.", required=False)
     parser.add_argument("--limit", help="Total amount of images I should download. Default 1000",
                         type=int, default=1000, required=False)
+    parser.add_argument("--headless", help="Create a headless ChromeDriver instance.",
+                        action='store_true', required=False)
     args = parser.parse_args()
 
     # set local vars from user input
     query = urlparse.parse_qs(urlparse.urlparse(args.url).query)['q'][0] if args.url is not None else args.query
     limit = args.limit
+    header = args.headless if args.headless is not None else False
     url = args.url if args.url is not None else "https://www.google.com/search?q={}&source=lnms&tbm=isch".format(query)
 
     # check directory and create if necessary
@@ -151,7 +163,7 @@ if __name__ == "__main__":
     if not os.path.isdir("dataset/logs/google/".format(query)):
         os.makedirs("dataset/logs/google/".format(query))
 
-    source = search(url)
+    source = search(url, header)
 
     # set stack limit
     sys.setrecursionlimit(1000000)
