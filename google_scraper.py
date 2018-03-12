@@ -134,10 +134,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("query", help="Give the query that I should parse.")
     parser.add_argument("--url", help="Give the url that I should parse.", required=False)
+    parser.add_argument("--limit", help="Total amount of images I should download. Default 1000",
+                        type=int, default=1000, required=False)
     args = parser.parse_args()
 
     # set local vars from user input
     query = urlparse.parse_qs(urlparse.urlparse(args.url).query)['q'][0] if args.url is not None else args.query
+    limit = args.limit
     url = args.url if args.url is not None else "https://www.google.com/search?q={}&source=lnms&tbm=isch".format(query)
 
     # check directory and create if necessary
@@ -170,6 +173,8 @@ if __name__ == "__main__":
     images = {}
     link_counter = 0
     for a in soup.find_all("div", class_="rg_meta"):
+        if link_counter >= int(round(float(limit)*1.25 + 0.5)): # assuming a 25% error rate
+            break
         print("\n------------------------------------------")
         rg_meta = json.loads(a.text)
         if 'st' in rg_meta:
@@ -192,7 +197,9 @@ if __name__ == "__main__":
     print("\n===============================================\n")
     download_image.delta = 0
     for i, (link) in enumerate(links):
-        print("\n------------------------------------------\n")
+        if download_image.delta >= limit: # temporary solution as I do some testing to see if all images queried are downloaded
+            break
+        print("\n------------------ ------------------------\n")
         try:
             download_image(link, images[link])
         except Exception as e:

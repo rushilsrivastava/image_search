@@ -48,8 +48,11 @@ Then:
 
 ## FAQs
 
+*How can I download a specific amount of images?*
+ - Use the `--limit` flag to define the amount of images you want to download. 
+
 *How do I search with custom filters on Google Images?*
- - Use the `--url` flag to define your own url with the search filter. 
+ - Use the `--url` flag to define your own url with the search filter.
 
 ## Disclaimer
 

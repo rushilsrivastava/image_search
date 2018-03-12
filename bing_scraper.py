@@ -83,14 +83,14 @@ if __name__ == "__main__":
     # parse command line options
     parser = argparse.ArgumentParser()
     parser.add_argument("keyword", help="Give the keyword that I should parse.")
-    parser.add_argument("--delta", help="Total amount of images I should download. Default 1000",
+    parser.add_argument("--limit", help="Total amount of images I should download. Default 1000",
                         type=int, default=1000, required=False)
     parser.add_argument("--adult-filter-off", help="Disable adult filter", action='store_true', required=False)
     args = parser.parse_args()
 
     # set local vars from user input
     query = args.keyword
-    delta = args.delta
+    delta = args.limit
     adult = "off" if args.adult_filter_off else "on"
     url = "https://www.bing.com/images/async?q={}&first=0&adlt={}".format(
         str(query), adult)
