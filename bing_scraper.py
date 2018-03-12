@@ -119,7 +119,7 @@ if __name__ == "__main__":
         payload = (("q", str(query)), ("first", page_counter), ("adlt", adult))
         source = requests.get(
             "https://www.bing.com/images/async", params=payload, headers=headers).content
-        soup = BeautifulSoup(str(source), "html.parser")
+        soup = BeautifulSoup(str(source).replace('\r\n', ""), "html.parser")
 
         try:
             os.remove("dataset/logs/bing/errors.log")

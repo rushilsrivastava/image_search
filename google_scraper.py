@@ -27,7 +27,6 @@ Author: Rushil Srivastava (rushu0922@gmail.com)
 
 
 def search(url, header):
-
     # Create a browser and resize depending on user preference
 
     if header:
