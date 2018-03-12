@@ -16,8 +16,10 @@ ua = UserAgent()
 
 
 def getData(offset):
-    headers = {"Content-Type": "multipart/form-data", "Ocp-Apim-Subscription-Key": apikey}
-    req = "https://api.cognitive.microsoft.com/bing/v5.0/images/search?q={}&count=150&offset={}".format(query, offset)
+    headers = {"Content-Type": "multipart/form-data",
+               "Ocp-Apim-Subscription-Key": apikey}
+    req = "https://api.cognitive.microsoft.com/bing/v5.0/images/search?q={}&count=150&offset={}".format(
+        query, offset)
     r = requests.post(req, headers=headers)
     data = json.loads(r.text)
     return data
@@ -51,8 +53,10 @@ if __name__ == "__main__":
 
     print(apikey)
 
-    headers = {"Content-Type": "multipart/form-data", "Ocp-Apim-Subscription-Key": apikey}
-    req = "https://api.cognitive.microsoft.com/bing/v5.0/images/search?q={}&count=150".format(query)
+    headers = {"Content-Type": "multipart/form-data",
+               "Ocp-Apim-Subscription-Key": apikey}
+    req = "https://api.cognitive.microsoft.com/bing/v5.0/images/search?q={}&count=150".format(
+        query)
     r = requests.post(req, headers=headers)
     data = json.loads(r.text)
 
@@ -64,9 +68,9 @@ if __name__ == "__main__":
     with open("dataset/bing/{}/{}.json".format(path, path), "w+") as outfile:
         json.dump(data, outfile, indent=4)
 
-    numImages = data['totalEstimatedMatches'] # 775
-    numOperations = int(numImages / 150) # 1
-    numOperationsExtra = numImages % 150 # #0
+    numImages = data['totalEstimatedMatches']  # 775
+    numOperations = int(numImages / 150)  # 1
+    numOperationsExtra = numImages % 150  # 0
     firstImages = data['value']
 
     print("[*] Number of Images indexed: {}\n".format(numImages))
@@ -82,7 +86,8 @@ if __name__ == "__main__":
             image_data = "bing", args.keyword, firstImages[i]['name'], link, firstImages[i]['hostPageDisplayUrl'], firstImages[i][
                 'datePublished']
             type = firstImages[i]['encodingFormat']
-            print("[%] Downloading Image #{} from {}".format(totalDownloaded, link))
+            print("[%] Downloading Image #{} from {}".format(
+                totalDownloaded, link))
             urllib.request.urlretrieve(link,
                                        "dataset/bing/{}/".format(path) + "Scrapper_{}.{}".format(
                                            str(totalDownloaded), type))
@@ -94,7 +99,6 @@ if __name__ == "__main__":
             print("[!] Issue Downloading: {}\n[!] Error: {}".format(link, e))
             error(link)
         delta += 1
-
 
     extraCount = 0
     while delta <= numImages:
@@ -108,8 +112,10 @@ if __name__ == "__main__":
         print("[%] Starting extra query {}".format(extraCount))
         print("[%] Offset = {}\n".format(offset))
 
-        headers = {"Content-Type": "multipart/form-data", "Ocp-Apim-Subscription-Key": apikey}
-        req = "https://api.cognitive.microsoft.com/bing/v5.0/images/search?q={}&count=150&offset={}".format(query, offset)
+        headers = {"Content-Type": "multipart/form-data",
+                   "Ocp-Apim-Subscription-Key": apikey}
+        req = "https://api.cognitive.microsoft.com/bing/v5.0/images/search?q={}&count=150&offset={}".format(
+            query, offset)
         r = requests.post(req, headers=headers)
         resp = json.loads(r.text)
         Images = resp['value']
@@ -124,7 +130,8 @@ if __name__ == "__main__":
                 type = Images[i]['encodingFormat']
                 if type == "jpeg":
                     type = "jpg"
-                print("[%] Downloading Image #{} from {}".format(totalDownloaded, link))
+                print("[%] Downloading Image #{} from {}".format(
+                    totalDownloaded, link))
                 headers = {"User-Agent": ua.random}
                 urllib.request.urlretrieve(link,
                                            "dataset/bing/{}/".format(path) + "Scrapper_{}.{}".format(

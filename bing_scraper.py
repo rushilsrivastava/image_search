@@ -65,7 +65,8 @@ def download_image(link, image_data):
         print("[%] Downloading Image #{} from {}".format(
             download_image.delta, link))
         try:
-            save_image(link, "dataset/bing/{}/".format(query) + "Scrapper_{}.{}".format(str(download_image.delta), type), headers)
+            save_image(link, "dataset/bing/{}/".format(query) +
+                       "Scrapper_{}.{}".format(str(download_image.delta), type), headers)
             print("[%] Downloaded File")
             with open("dataset/bing/{}/Scrapper_{}.json".format(query, str(download_image.delta)), "w") as outfile:
                 json.dump(image_data, outfile, indent=4)
@@ -82,10 +83,12 @@ def download_image(link, image_data):
 if __name__ == "__main__":
     # parse command line options
     parser = argparse.ArgumentParser()
-    parser.add_argument("keyword", help="Give the keyword that I should parse.")
+    parser.add_argument(
+        "keyword", help="Give the keyword that I should parse.")
     parser.add_argument("--limit", help="Total amount of images I should download. Default 1000",
                         type=int, default=1000, required=False)
-    parser.add_argument("--adult-filter-off", help="Disable adult filter", action='store_true', required=False)
+    parser.add_argument("--adult-filter-off", help="Disable adult filter",
+                        action='store_true', required=False)
     args = parser.parse_args()
 
     # set local vars from user input
@@ -114,7 +117,8 @@ if __name__ == "__main__":
         ua = UserAgent()
         headers = {"User-Agent": ua.random}
         payload = (("q", str(query)), ("first", page_counter), ("adlt", adult))
-        source = requests.get("https://www.bing.com/images/async", params=payload, headers=headers).content
+        source = requests.get(
+            "https://www.bing.com/images/async", params=payload, headers=headers).content
         soup = BeautifulSoup(str(source), "html.parser")
 
         try:
@@ -123,7 +127,8 @@ if __name__ == "__main__":
             pass
 
         # Get the links and image data
-        links = [json.loads(i.get("m").replace('\r\n', ""))["murl"] for i in soup.find_all("a", class_="iusc")]
+        links = [json.loads(i.get("m").replace('\r\n', ""))["murl"]
+                 for i in soup.find_all("a", class_="iusc")]
         print("[%] Indexed {} Images on Page {}.".format(
             len(links), page_counter + 1))
         print("\n===============================================\n")

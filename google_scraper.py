@@ -93,6 +93,7 @@ def error(link):
         with open("dataset/logs/google/errors.log".format(query), "w+") as myfile:
             myfile.write(link + "\n")
 
+
 def save_image(link, file_path, headers):
     r = requests.get(link, stream=True, headers=headers)
     if r.status_code == 200:
@@ -124,7 +125,8 @@ def download_image(link, image_data):
         print("[%] Downloading Image #{} from {}".format(
             download_image.delta, link))
         try:
-            save_image(link, "dataset/google/{}/".format(query) + "Scrapper_{}.{}".format(str(download_image.delta), type), headers)
+            save_image(link, "dataset/google/{}/".format(query) +
+                       "Scrapper_{}.{}".format(str(download_image.delta), type), headers)
             print("[%] Downloaded File")
             with open("dataset/google/{}/Scrapper_{}.json".format(query, str(download_image.delta)), "w") as outfile:
                 json.dump(image_data, outfile, indent=4)
@@ -142,7 +144,8 @@ if __name__ == "__main__":
     # parse command line options
     parser = argparse.ArgumentParser()
     parser.add_argument("query", help="Give the query that I should parse.")
-    parser.add_argument("--url", help="Give the url that I should parse.", required=False)
+    parser.add_argument(
+        "--url", help="Give the url that I should parse.", required=False)
     parser.add_argument("--limit", help="Total amount of images I should download. Default 1000",
                         type=int, default=1000, required=False)
     parser.add_argument("--headless", help="Create a headless ChromeDriver instance.",
@@ -150,10 +153,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # set local vars from user input
-    query = urlparse.parse_qs(urlparse.urlparse(args.url).query)['q'][0] if args.url is not None else args.query
+    query = urlparse.parse_qs(urlparse.urlparse(args.url).query)[
+        'q'][0] if args.url is not None else args.query
     limit = args.limit
     header = args.headless if args.headless is not None else False
-    url = args.url if args.url is not None else "https://www.google.com/search?q={}&source=lnms&tbm=isch".format(query)
+    url = args.url if args.url is not None else "https://www.google.com/search?q={}&source=lnms&tbm=isch".format(
+        query)
 
     # check directory and create if necessary
     if not os.path.isdir("dataset/"):
@@ -185,7 +190,8 @@ if __name__ == "__main__":
     images = {}
     link_counter = 0
     for a in soup.find_all("div", class_="rg_meta"):
-        if link_counter >= int(round(float(limit)*1.25 + 0.5)): # assuming a 25% error rate
+        # assuming a 25% error rate
+        if link_counter >= int(round(float(limit) * 1.25 + 0.5)):
             break
         print("\n------------------------------------------")
         rg_meta = json.loads(a.text)
@@ -209,7 +215,7 @@ if __name__ == "__main__":
     print("\n===============================================\n")
     download_image.delta = 0
     for i, (link) in enumerate(links):
-        if download_image.delta >= limit: # temporary solution as I do some testing to see if all images queried are downloaded
+        if download_image.delta >= limit:  # temporary solution as I do some testing to see if all images queried are downloaded
             break
         print("\n------------------ ------------------------\n")
         try:
