@@ -20,6 +20,8 @@ Then:
 
     python google_scraper.py cats
 
+You can download image metadata with the `--json` argument.
+
 ### Bing Image Scraper/Downloader:
 
 #### Without API Key:
@@ -32,6 +34,7 @@ Then:
 
     python bing_scraper.py cats
 
+You can download image metadata with the `--json` argument.
 
 #### With API Key:
 
@@ -49,7 +52,7 @@ Then:
 ## FAQs
 
 *How can I download a specific amount of images?*
- - Use the `--limit` flag to define the amount of images you want to download. 
+ - Use the `--limit` flag to define the amount of images you want to download.
 
 *How do I search with custom filters on Google Images?*
  - Use the `--url` flag to define your own url with the search filter.
