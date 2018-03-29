@@ -23,8 +23,10 @@ before_script:
 install: "pip install -r requirements.txt"
 
 script:
-  - python google_scraper.py cats --limit 100
-  - python bing_scraper.py cats --limit 100
+  - python google_scraper.py cats --limit 100 --headless
+  - python bing_scraper.py cats --limit 100 --headless
+  - python google_scraper.py dogs --limit 10 --headless --json
+  - python bing_scraper.py cats --limit 10 --headless --json
   - rm -rf dataset/
 
 notifications:

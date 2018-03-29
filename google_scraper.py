@@ -103,7 +103,7 @@ def save_image(link, file_path, headers):
         raise Exception("Image returned a {} error.".format(r.status_code))
 
 
-def download_image(link, image_data):
+def download_image(link, image_data, metadata):
     download_image.delta += 1
     # Use a random user agent header for bot id
     ua = UserAgent(verify_ssl=False)
@@ -127,8 +127,9 @@ def download_image(link, image_data):
             save_image(link, "dataset/google/{}/".format(query) +
                        "Scrapper_{}.{}".format(str(download_image.delta), type), headers)
             print("[%] Downloaded File")
-            with open("dataset/google/{}/Scrapper_{}.json".format(query, str(download_image.delta)), "w") as outfile:
-                json.dump(image_data, outfile, indent=4)
+            if metadata:
+                with open("dataset/google/{}/Scrapper_{}.json".format(query, str(download_image.delta)), "w") as outfile:
+                    json.dump(image_data, outfile, indent=4)
         except Exception as e:
             download_image.delta -= 1
             print("[!] Issue Downloading: {}\n[!] Error: {}".format(link, e))
@@ -149,6 +150,8 @@ if __name__ == "__main__":
                         type=int, default=1000, required=False)
     parser.add_argument("--headless", help="Create a headless ChromeDriver instance.",
                         action='store_true', required=False)
+    parser.add_argument("--json", help="Download image metadata.",
+                        action='store_true', required=False)
     args = parser.parse_args()
 
     # set local vars from user input
@@ -156,6 +159,7 @@ if __name__ == "__main__":
         'q'][0] if args.url is not None else args.query
     limit = args.limit
     header = args.headless if args.headless is not None else False
+    metadata = args.json if args.json is not None else False
     url = args.url if args.url is not None else "https://www.google.com/search?q={}&source=lnms&tbm=isch".format(
         query)
 
@@ -216,9 +220,9 @@ if __name__ == "__main__":
     for i, (link) in enumerate(links):
         if download_image.delta >= limit:  # temporary solution as I do some testing to see if all images queried are downloaded
             break
-        print("\n------------------ ------------------------\n")
+        print("\n------------------------------------------\n")
         try:
-            download_image(link, images[link])
+            download_image(link, images[link], metadata)
         except Exception as e:
             error(link)
 

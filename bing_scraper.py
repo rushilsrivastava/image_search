@@ -44,7 +44,7 @@ def save_image(link, file_path, headers):
         raise Exception("Image returned a {} error.".format(r.status_code))
 
 
-def download_image(link, image_data):
+def download_image(link, image_data, metadata):
     download_image.delta += 1
     # Use a random user agent header for bot id
     ua = UserAgent(verify_ssl=False)
@@ -68,8 +68,9 @@ def download_image(link, image_data):
             save_image(link, "dataset/bing/{}/".format(query) +
                        "Scrapper_{}.{}".format(str(download_image.delta), type), headers)
             print("[%] Downloaded File")
-            with open("dataset/bing/{}/Scrapper_{}.json".format(query, str(download_image.delta)), "w") as outfile:
-                json.dump(image_data, outfile, indent=4)
+            if metadata:
+                with open("dataset/bing/{}/Scrapper_{}.json".format(query, str(download_image.delta)), "w") as outfile:
+                    json.dump(image_data, outfile, indent=4)
         except Exception as e:
             download_image.delta -= 1
             print("[!] Issue Downloading: {}\n[!] Error: {}".format(link, e))
@@ -87,6 +88,8 @@ if __name__ == "__main__":
         "keyword", help="Give the keyword that I should parse.")
     parser.add_argument("--limit", help="Total amount of images I should download. Default 1000",
                         type=int, default=1000, required=False)
+    parser.add_argument("--json", help="Download image data.",
+                        action='store_true', required=False)
     parser.add_argument("--adult-filter-off", help="Disable adult filter",
                         action='store_true', required=False)
     args = parser.parse_args()
@@ -94,6 +97,7 @@ if __name__ == "__main__":
     # set local vars from user input
     query = args.keyword
     delta = args.limit
+    metadata = args.json if args.json is not None else False
     adult = "off" if args.adult_filter_off else "on"
     url = "https://www.bing.com/images/async?q={}&first=0&adlt={}".format(
         str(query), adult)
@@ -145,7 +149,7 @@ if __name__ == "__main__":
                 image_data = "bing", query, link, iusc["purl"], iusc["md5"]
                 images[link] = image_data
                 try:
-                    download_image(link, images[link])
+                    download_image(link, images[link], metadata)
                 except Exception as e:
                     error(link)
             except Exception as e:
