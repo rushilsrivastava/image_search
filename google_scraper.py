@@ -8,7 +8,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from pathlib import Path
-from lxml.html import fromstring
+import lxml.html
 import os
 import sys
 from fake_useragent import UserAgent
@@ -164,6 +164,7 @@ if __name__ == "__main__":
         query)
 
     # check directory and create if necessary
+    os.chdir(os.getcwd())
     if not os.path.isdir("dataset/"):
         os.makedirs("dataset/")
     if not os.path.isdir("dataset/google/{}".format(query)):
@@ -192,9 +193,10 @@ if __name__ == "__main__":
     print("[%] Getting Image Information.")
     images = {}
     link_counter = 0
+    download_image.delta = 0
     for a in soup.find_all("div", class_="rg_meta"):
         # assuming a 25% error rate
-        if link_counter >= int(round(float(limit) * 1.25 + 0.5)):
+        if download_image.delta >= int(limit):
             break
         print("\n------------------------------------------")
         rg_meta = json.loads(a.text)
@@ -207,24 +209,15 @@ if __name__ == "__main__":
         try:
             image_data = "google", query, rg_meta["pt"], rg_meta["s"], title, link, rg_meta["ru"]
             images[link] = image_data
+            try:
+                download_image(link, images[link], metadata)
+            except Exception as e:
+                error(link)
         except Exception as e:
             images[link] = image_data
             print("[!] Issue getting data: {}\n[!] Error: {}".format(rg_meta, e))
 
         link_counter += 1
-
-    # Open i processes to download
-    print("\n------------------------------------------\n")
-    print("\n===============================================\n")
-    download_image.delta = 0
-    for i, (link) in enumerate(links):
-        if download_image.delta >= limit:  # temporary solution as I do some testing to see if all images queried are downloaded
-            break
-        print("\n------------------------------------------\n")
-        try:
-            download_image(link, images[link], metadata)
-        except Exception as e:
-            error(link)
 
     print("\n\n[%] Done. Downloaded {} images.".format(download_image.delta))
     print("\n===============================================\n")
