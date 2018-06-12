@@ -5,7 +5,7 @@ import argparse
 import json
 from bs4 import BeautifulSoup
 from pathlib import Path
-from lxml.html import fromstring
+import lxml.html
 import os
 import sys
 from fake_useragent import UserAgent
@@ -103,6 +103,7 @@ if __name__ == "__main__":
         str(query), adult)
 
     # check directory and create if necessary
+    os.chdir(os.getcwd())
     if not os.path.isdir("dataset/"):
         os.makedirs("dataset/")
     if not os.path.isdir("dataset/bing/{}".format(query)):
