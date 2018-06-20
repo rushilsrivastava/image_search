@@ -13,12 +13,14 @@ This should only be used for educational and personal purposes only. I am not re
                     engine query
 
 **Example:** Google Images
- 	image_search google cat --limit 10 --json
+
+	image_search google cat --limit 10 --json
 
 This will download 10 cat images and metadata from Google Images.
 
 **Example:** Bing Images
- 	image_search bing dog --limit 10 --json
+
+	image_search bing dog --limit 10 --json
 
 This will download 10 dog images and metadata from Bing Images.
 
