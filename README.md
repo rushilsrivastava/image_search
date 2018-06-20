@@ -1,52 +1,24 @@
-# image-scrapers
+# Image Search Python Package
 
-[![Build Status](https://travis-ci.org/rushilsrivastava/image-scrapers.svg?branch=master)](https://travis-ci.org/rushilsrivastava/image-scrapers)
+A simple python package for saving images from Bing and Google without using API keys. This package utilizes web browsers to help scrape images found on web searches. 
 
-Image Scrapers built for scraping/downloading Bing and Google images + metadata. Both the Bing and Google Scraper work in Python 2 and 3. You can use these scripts to download images that Bing and Google return in search queries.
+This should only be used for educational and personal purposes only. I am not responsible for any issues that may arise by scraping such sources. All images are copyrighted and owned by their respective owners, I do not claim any ownership.
 
-Both the scrapers will save to their own folders under a global folder called `dataset`.
+## Usage
 
-## How to Use
+	usage: image_search [-h] [--limit LIMIT] [--json] [--url URL]
+                    [--adult-filter-off]
+                    engine query
 
-### Google Image Scraper/Downloader:
+**Example:** Google Images
+ 	image_search google cat --limit 10 --json
 
-Make sure you install the requirements by doing:
+This will download 10 cat images and metadata from Google Images.
 
-    pip install -r requirements.txt
+**Example:** Bing Images
+ 	image_search bing dog --limit 10 --json
 
-Ensure you have the [appropriate version](https://sites.google.com/a/chromium.org/chromedriver/downloads) of ChromeDriver on your machine.
-
-Then:
-
-    python google_scraper.py cats
-
-You can download image metadata with the `--json` argument.
-
-### Bing Image Scraper/Downloader:
-
-#### Without API Key:
-
-Make sure you install the requirements by doing:
-
-    pip install -r requirements.txt
-
-Then:
-
-    python bing_scraper.py cats
-
-You can download image metadata with the `--json` argument.
-
-#### With API Key:
-
-Get a [Bing Image Search API Key](https://azure.microsoft.com/en-us/services/cognitive-services/bing-image-search-api/).
-
-Make sure you install the requirements by doing:
-
-    pip install -r requirements.txt
-
-Then:
-
-    python3.5 bing_scraper_key.py cats -key YOUR_API_KEY_HERE
+This will download 10 dog images and metadata from Bing Images.
 
 
 ## FAQs

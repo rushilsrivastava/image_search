@@ -26,14 +26,11 @@ Author: Rushil Srivastava (rushu0922@gmail.com)
 '''
 
 
-def search(url, header):
+def search(url):
     # Create a browser and resize depending on user preference
 
-    if header:
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")
-    else:
-        chrome_options = None
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
 
     browser = webdriver.Chrome(chrome_options=chrome_options)
     browser.set_window_size(1024, 768)
@@ -70,10 +67,10 @@ def search(url, header):
     # Get page source and close the browser
     source = browser.page_source
     if sys.version_info[0] > 2:
-        with open('dataset/logs/google/source.html', 'w+', encoding='utf-8', errors='replace') as f:
+        with open('{}/dataset/logs/google/source.html'.format(os.getcwd()), 'w+', encoding='utf-8', errors='replace') as f:
             f.write(source)
     else:
-        with io.open('dataset/logs/google/source.html', 'w+', encoding='utf-8') as f:
+        with io.open('{}/dataset/logs/google/source.html'.format(os.getcwd()), 'w+', encoding='utf-8') as f:
             f.write(source)
 
     browser.close()
@@ -82,18 +79,21 @@ def search(url, header):
     return source
 
 
-def error(link):
+def error(link, query):
     print("[!] Skipping {}. Can't download or no metadata.\n".format(link))
-    file = Path("dataset/logs/google/errors.log".format(query))
+    file = Path("{}/dataset/logs/google/errors.log".format(os.getcwd(), query))
     if file.is_file():
-        with open("dataset/logs/google/errors.log".format(query), "a") as myfile:
+        with open("{}/dataset/logs/google/errors.log".format(os.getcwd(), query), "a") as myfile:
             myfile.write(link + "\n")
     else:
-        with open("dataset/logs/google/errors.log".format(query), "w+") as myfile:
+        with open("{}/dataset/logs/google/errors.log".format(os.getcwd(), query), "w+") as myfile:
             myfile.write(link + "\n")
 
 
-def save_image(link, file_path, headers):
+def save_image(link, file_path):
+    # Use a random user agent header for bot id
+    ua = UserAgent(verify_ssl=False)
+    headers = {"User-Agent": ua.random}
     r = requests.get(link, stream=True, headers=headers)
     if r.status_code == 200:
         with open(file_path, 'wb') as f:
@@ -103,11 +103,8 @@ def save_image(link, file_path, headers):
         raise Exception("Image returned a {} error.".format(r.status_code))
 
 
-def download_image(link, image_data, metadata):
+def download_image(link, image_data, metadata, query):
     download_image.delta += 1
-    # Use a random user agent header for bot id
-    ua = UserAgent(verify_ssl=False)
-    headers = {"User-Agent": ua.random}
 
     # Get the image link
     try:
@@ -124,55 +121,25 @@ def download_image(link, image_data, metadata):
         print("[%] Downloading Image #{} from {}".format(
             download_image.delta, link))
         try:
-            save_image(link, "dataset/google/{}/".format(query) +
-                       "Scrapper_{}.{}".format(str(download_image.delta), type), headers)
+            save_image(link, "{}/dataset/google/{}/".format(os.getcwd(), query) +
+                       "Scrapper_{}.{}".format(str(download_image.delta), type))
             print("[%] Downloaded File")
             if metadata:
-                with open("dataset/google/{}/Scrapper_{}.json".format(query, str(download_image.delta)), "w") as outfile:
+                with open("{}/dataset/google/{}/Scrapper_{}.json".format(os.getcwd(), query, str(download_image.delta)), "w") as outfile:
                     json.dump(image_data, outfile, indent=4)
         except Exception as e:
             download_image.delta -= 1
             print("[!] Issue Downloading: {}\n[!] Error: {}".format(link, e))
-            error(link)
+            error(link, query)
     except Exception as e:
         download_image.delta -= 1
         print("[!] Issue getting: {}\n[!] Error:: {}".format(link, e))
-        error(link)
+        error(link, query)
 
 
-if __name__ == "__main__":
-    # parse command line options
-    parser = argparse.ArgumentParser()
-    parser.add_argument("query", help="Give the query that I should parse.")
-    parser.add_argument(
-        "--url", help="Give the url that I should parse.", required=False)
-    parser.add_argument("--limit", help="Total amount of images I should download. Default 1000",
-                        type=int, default=1000, required=False)
-    parser.add_argument("--headless", help="Create a headless ChromeDriver instance.",
-                        action='store_true', required=False)
-    parser.add_argument("--json", help="Download image metadata.",
-                        action='store_true', required=False)
-    args = parser.parse_args()
+def google(url, metadata, query, limit):
 
-    # set local vars from user input
-    query = urlparse.parse_qs(urlparse.urlparse(args.url).query)[
-        'q'][0] if args.url is not None else args.query
-    limit = args.limit
-    header = args.headless if args.headless is not None else False
-    metadata = args.json if args.json is not None else False
-    url = args.url if args.url is not None else "https://www.google.com/search?q={}&source=lnms&tbm=isch".format(
-        query)
-
-    # check directory and create if necessary
-    os.chdir(os.getcwd())
-    if not os.path.isdir("dataset/"):
-        os.makedirs("dataset/")
-    if not os.path.isdir("dataset/google/{}".format(query)):
-        os.makedirs("dataset/google/{}".format(query))
-    if not os.path.isdir("dataset/logs/google/".format(query)):
-        os.makedirs("dataset/logs/google/".format(query))
-
-    source = search(url, header)
+    source = search(url)
 
     # set stack limit
     sys.setrecursionlimit(1000000)
@@ -181,7 +148,7 @@ if __name__ == "__main__":
     soup = BeautifulSoup(str(source), "html.parser")
 
     try:
-        os.remove("dataset/logs/google/errors.log")
+        os.remove("{}/dataset/logs/google/errors.log".format(os.getcwd()))
     except OSError:
         pass
 
@@ -210,9 +177,9 @@ if __name__ == "__main__":
             image_data = "google", query, rg_meta["pt"], rg_meta["s"], title, link, rg_meta["ru"]
             images[link] = image_data
             try:
-                download_image(link, images[link], metadata)
+                download_image(link, images[link], metadata, query)
             except Exception as e:
-                error(link)
+                error(link, query)
         except Exception as e:
             images[link] = image_data
             print("[!] Issue getting data: {}\n[!] Error: {}".format(rg_meta, e))

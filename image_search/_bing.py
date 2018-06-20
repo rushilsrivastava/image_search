@@ -23,18 +23,21 @@ Author: Rushil Srivastava (rushu0922@gmail.com)
 '''
 
 
-def error(link):
+def error(link, query):
     print("[!] Skipping {}. Can't download or no metadata.\n".format(link))
-    file = Path("dataset/logs/bing/errors.log".format(query))
+    file = Path("{}/dataset/logs/bing/errors.log".format(os.getcwd(), query))
     if file.is_file():
-        with open("dataset/logs/bing/errors.log".format(query), "a") as myfile:
+        with open("{}/dataset/logs/bing/errors.log".format(os.getcwd(), query), "a") as myfile:
             myfile.write(link + "\n")
     else:
-        with open("dataset/logs/bing/errors.log".format(query), "w+") as myfile:
+        with open("{}/dataset/logs/bing/errors.log".format(os.getcwd(), query), "w+") as myfile:
             myfile.write(link + "\n")
 
 
-def save_image(link, file_path, headers):
+def save_image(link, file_path):
+    # Use a random user agent header for bot id
+    ua = UserAgent(verify_ssl=False)
+    headers = {"User-Agent": ua.random}
     r = requests.get(link, stream=True, headers=headers)
     if r.status_code == 200:
         with open(file_path, 'wb') as f:
@@ -44,11 +47,8 @@ def save_image(link, file_path, headers):
         raise Exception("Image returned a {} error.".format(r.status_code))
 
 
-def download_image(link, image_data, metadata):
+def download_image(link, image_data, metadata, query):
     download_image.delta += 1
-    # Use a random user agent header for bot id
-    ua = UserAgent(verify_ssl=False)
-    headers = {"User-Agent": ua.random}
 
     # Get the image link
     try:
@@ -65,51 +65,25 @@ def download_image(link, image_data, metadata):
         print("[%] Downloading Image #{} from {}".format(
             download_image.delta, link))
         try:
-            save_image(link, "dataset/bing/{}/".format(query) +
-                       "Scrapper_{}.{}".format(str(download_image.delta), type), headers)
+            save_image(link, "{}/dataset/bing/{}/".format(os.getcwd(), query) +
+                       "Scrapper_{}.{}".format(str(download_image.delta), type))
             print("[%] Downloaded File")
             if metadata:
-                with open("dataset/bing/{}/Scrapper_{}.json".format(query, str(download_image.delta)), "w") as outfile:
+                with open("{}/dataset/bing/{}/Scrapper_{}.json".format(os.getcwd(), query, str(download_image.delta)), "w") as outfile:
                     json.dump(image_data, outfile, indent=4)
         except Exception as e:
             download_image.delta -= 1
             print("[!] Issue Downloading: {}\n[!] Error: {}".format(link, e))
-            error(link)
+            error(link, query)
     except Exception as e:
         download_image.delta -= 1
         print("[!] Issue getting: {}\n[!] Error:: {}".format(link, e))
-        error(link)
+        error(link, query)
 
 
-if __name__ == "__main__":
-    # parse command line options
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "keyword", help="Give the keyword that I should parse.")
-    parser.add_argument("--limit", help="Total amount of images I should download. Default 1000",
-                        type=int, default=1000, required=False)
-    parser.add_argument("--json", help="Download image data.",
-                        action='store_true', required=False)
-    parser.add_argument("--adult-filter-off", help="Disable adult filter",
-                        action='store_true', required=False)
-    args = parser.parse_args()
+def bing(url, metadata, query, delta, adult):
 
-    # set local vars from user input
-    query = args.keyword
-    delta = args.limit
-    metadata = args.json if args.json is not None else False
-    adult = "off" if args.adult_filter_off else "on"
-    url = "https://www.bing.com/images/async?q={}&first=0&adlt={}".format(
-        str(query), adult)
-
-    # check directory and create if necessary
-    os.chdir(os.getcwd())
-    if not os.path.isdir("dataset/"):
-        os.makedirs("dataset/")
-    if not os.path.isdir("dataset/bing/{}".format(query)):
-        os.makedirs("dataset/bing/{}".format(query))
-    if not os.path.isdir("dataset/logs/bing/".format(query)):
-        os.makedirs("dataset/logs/bing/".format(query))
+    delta = int(delta)
 
     # set stack limit
     sys.setrecursionlimit(1000000)
@@ -150,9 +124,9 @@ if __name__ == "__main__":
                 image_data = "bing", query, link, iusc["purl"], iusc["md5"]
                 images[link] = image_data
                 try:
-                    download_image(link, images[link], metadata)
+                    download_image(link, images[link], metadata, query)
                 except Exception as e:
-                    error(link)
+                    error(link, query)
             except Exception as e:
                 images[link] = image_data
                 print("[!] Issue getting data: {}\n[!] Error: {}".format(rg_meta, e))
