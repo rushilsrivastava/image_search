@@ -1,5 +1,7 @@
 # Image Search Python Package
 
+[![Build Status](https://travis-ci.org/rushilsrivastava/image-scrapers.svg?branch=master)](https://travis-ci.org/rushilsrivastava/image-scrapers)
+
 A simple python package for saving images from Bing and Google without using API keys. This package utilizes web browsers to help scrape images found on web searches. 
 
 This should only be used for educational and personal purposes only. I am not responsible for any issues that may arise by scraping such sources. All images are copyrighted and owned by their respective owners, I do not claim any ownership.
