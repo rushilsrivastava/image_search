@@ -2,8 +2,12 @@ from pip import __main__
 import sys
 import os
 import argparse
-import _bing
-import _google
+try: 
+    import _bing
+    import _google
+except ImportError: # Python 3 change import scheme
+    from . import _bing
+    from . import _google
 
 '''
 Console program to download images from Google or Bing.
