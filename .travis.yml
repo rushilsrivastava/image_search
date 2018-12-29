@@ -23,10 +23,10 @@ before_script:
 install: "pip install ."
 
 script:
-  - image_scraper google cats --limit 100
-  - image_scraper bing cats --limit 100
-  - image_scraper google dogs --limit 10 --json
-  - image_scraper bing cats --limit 10 --json
+  - image_search google cats --limit 100
+  - image_search bing cats --limit 100
+  - image_search google dogs --limit 10 --json
+  - image_search bing cats --limit 10 --json
   - rm -rf dataset/
 
 notifications:
