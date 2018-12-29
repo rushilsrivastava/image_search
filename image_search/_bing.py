@@ -94,7 +94,7 @@ def bing(url, metadata, query, delta, adult):
         payload = (("q", str(query)), ("first", page_counter), ("adlt", adult))
         source = requests.get(
             "https://www.bing.com/images/async", params=payload, headers=headers).content
-        soup = BeautifulSoup(str(source).replace('\r\n', ""), "html.parser")
+        soup = BeautifulSoup(str(source).replace('\r\n', ""), "lxml")
 
         try:
             os.remove("dataset/logs/bing/errors.log")
