@@ -1,6 +1,5 @@
 selenium
 requests[security]
-argparse
 pathlib
 lxml
 bs4
