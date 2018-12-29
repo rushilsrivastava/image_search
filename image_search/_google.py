@@ -1,14 +1,12 @@
 import requests
 import shutil
 import time
-import argparse
 import json
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from pathlib import Path
-import lxml.html
 import os
 import sys
 from fake_useragent import UserAgent
@@ -56,7 +54,7 @@ def search(url):
         for i in range(50):
             element.send_keys(Keys.PAGE_DOWN)
             time.sleep(0.3)  # bot id protection
-    except:
+    except Exception:
         for i in range(10):
             element.send_keys(Keys.PAGE_DOWN)
             time.sleep(0.3)  # bot id protection
@@ -145,7 +143,7 @@ def google(url, metadata, query, limit):
     sys.setrecursionlimit(1000000)
 
     # Parse the page source and download pics
-    soup = BeautifulSoup(str(source), "html.parser")
+    soup = BeautifulSoup(str(source), "lxml")
 
     try:
         os.remove("{}/dataset/logs/google/errors.log".format(os.getcwd()))
@@ -178,7 +176,7 @@ def google(url, metadata, query, limit):
             images[link] = image_data
             try:
                 download_image(link, images[link], metadata, query)
-            except Exception as e:
+            except Exception:
                 error(link, query)
         except Exception as e:
             images[link] = image_data

@@ -13,7 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/rushilsrivastava/image_search",
     download_url="https://github.com/rushilsrivastava/image_search/archive/0.0.1.tar.gz",
-    keywords = ['google', 'bing', 'images', 'scraping'],
+    keywords=['google', 'bing', 'images', 'scraping'],
     packages=['image_search'],
     install_requires=[
         'selenium',

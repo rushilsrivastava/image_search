@@ -1,11 +1,8 @@
 import requests
-import time
 import shutil
-import argparse
 import json
 from bs4 import BeautifulSoup
 from pathlib import Path
-import lxml.html
 import os
 import sys
 from fake_useragent import UserAgent
@@ -65,8 +62,7 @@ def download_image(link, image_data, metadata, query):
         print("[%] Downloading Image #{} from {}".format(
             download_image.delta, link))
         try:
-            save_image(link, "{}/dataset/bing/{}/".format(os.getcwd(), query) +
-                       "Scrapper_{}.{}".format(str(download_image.delta), type))
+            save_image(link, "{}/dataset/bing/{}/".format(os.getcwd(), query) + "Scrapper_{}.{}".format(str(download_image.delta), type))
             print("[%] Downloaded File")
             if metadata:
                 with open("{}/dataset/bing/{}/Scrapper_{}.json".format(os.getcwd(), query, str(download_image.delta)), "w") as outfile:
@@ -125,11 +121,11 @@ def bing(url, metadata, query, delta, adult):
                 images[link] = image_data
                 try:
                     download_image(link, images[link], metadata, query)
-                except Exception as e:
+                except Exception:
                     error(link, query)
             except Exception as e:
                 images[link] = image_data
-                print("[!] Issue getting data: {}\n[!] Error: {}".format(rg_meta, e))
+                print("[!] Issue getting data: {}\n[!] Error: {}".format(image_data, e))
 
             link_counter += 1
 

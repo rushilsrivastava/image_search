@@ -2,18 +2,25 @@ from pip import __main__
 import sys
 import os
 import argparse
-try: 
+if sys.version_info[0] > 2:
+    import urllib.parse as urlparse
+else:
+    import urlparse
+    import io
+    reload(sys)
+    sys.setdefaultencoding('utf8')
+try:
     import _bing
     import _google
-except ImportError: # Python 3 change import scheme
+except ImportError:  # Python 3 change import scheme
     from . import _bing
     from . import _google
 
 '''
 Console program to download images from Google or Bing.
+By: Rushil Srivastava
 '''
 
-# By Rushil Srivastava
 
 def main():
 
@@ -47,8 +54,7 @@ def main():
             query)
     elif engine == "bing" or engine == "b":
         engine = "bing"
-        url = "https://www.bing.com/images/async?q={}&first=0&adlt={}".format(
-        str(query), adult)
+        url = "https://www.bing.com/images/async?q={}&first=0&adlt={}".format(str(query), adult)
     else:
     	sys.exit("Invalid engine specified.")
 
@@ -66,6 +72,7 @@ def main():
         _google.google(url, metadata, query, limit)
     else:
         _bing.bing(url, metadata, query, limit, adult)
+
 
 if __name__ == "__main__":
     main()
