@@ -53,8 +53,7 @@ def main():
         url = args.url if args.url is not None else "https://www.google.com/search?q={}&source=lnms&tbm=isch".format(
             query)
     elif engine == "bing" or engine == "b":
-        engine = "bing"
-        url = "https://www.bing.com/images/async?q={}&first=0&adlt={}".format(str(query), adult)
+        pass
     else:
     	sys.exit("Invalid engine specified.")
 
@@ -71,7 +70,7 @@ def main():
     if engine == "google":
         _google.google(url, metadata, query, limit)
     else:
-        _bing.bing(url, metadata, query, limit, adult)
+        _bing.bing(metadata, query, limit, adult)
 
 
 if __name__ == "__main__":
