@@ -77,7 +77,7 @@ def download_image(link, image_data, metadata, query):
         error(link, query)
 
 
-def bing(url, metadata, query, delta, adult):
+def bing(metadata, query, delta, adult):
 
     delta = int(delta)
 
