@@ -102,7 +102,7 @@ def bing(url, metadata, query, delta, adult):
             pass
 
         # Get the links and image data
-        links = [json.loads(i.get("m").replace('\r\n', ""))["murl"]
+        links = [json.loads(i.get("m").replace('\\', ""))["murl"]
                  for i in soup.find_all("a", class_="iusc")]
         print("[%] Indexed {} Images on Page {}.".format(
             len(links), page_counter + 1))
@@ -113,7 +113,7 @@ def bing(url, metadata, query, delta, adult):
             if download_image.delta >= delta:
                 break
             print("\n------------------------------------------")
-            iusc = json.loads(a.get("m"))
+            iusc = json.loads(a.get("m").replace("\\",""))
             link = iusc["murl"]
             print("\n[%] Getting info on: {}".format(link))
             try:
